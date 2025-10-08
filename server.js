@@ -42,11 +42,21 @@ app.use(express.json());
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',') || ['none'],
+    environment: process.env.NODE_ENV || 'development'
+  });
 });
 
 // Adyen session creation endpoint
 app.post('/api/adyen/sessions', async (req, res) => {
+  console.log('=== Session Creation Request ===');
+  console.log('Origin:', req.headers.origin);
+  console.log('User-Agent:', req.headers['user-agent']);
+  console.log('Request body:', req.body);
+  
   try {
     const { amount, currency = 'AED', countryCode = 'AE', returnUrl } = req.body;
 
